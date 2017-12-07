@@ -1,50 +1,57 @@
 (function () {
     class Direction {
-        constructor(xAxisOffset, yAxisOffset) {
-            this.xAxisOffset = xAxisOffset;
-            this.yAxisOffset = yAxisOffset;
+        public static Top = new Direction(0, -1);
+        public static Bottom = new Direction(0, 1);
+        public static Left = new Direction(-1, 0);
+        public static Right = new Direction(1, 0);
+
+        constructor(public xAxisOffset: number, public yAxisOffset) {
         }
     }
-    Direction.Top = new Direction(0, -1);
-    Direction.Bottom = new Direction(0, 1);
-    Direction.Left = new Direction(-1, 0);
-    Direction.Right = new Direction(1, 0);
+
     class Point {
-        constructor(x, y, element) {
-            this.x = x;
-            this.y = y;
-            this.element = element;
+        constructor(
+            private x: number,
+            private y: number,
+            private element: HTMLDivElement) {
         }
-        get X() {
+
+        public get X(): number {
             return this.x;
         }
-        get Y() {
+
+        public get Y(): number {
             return this.y;
         }
-        setEmpty() {
+
+        public setEmpty() {
             this.element.className = "grid-item";
         }
-        setSnakePart() {
+
+        public setSnakePart() {
             this.element.className = "grid-item snake-part";
         }
-        setSnakeHead() {
+
+        public setSnakeHead() {
             this.element.className = "grid-item snake-head";
         }
-        setApple() {
+
+        public setApple() {
             this.element.className = "grid-item apple";
         }
-        get isApple() {
+
+        public get isApple(): boolean {
             return this.element.className.includes('apple');
         }
     }
+
     class Field {
-        constructor(size, boardElement) {
-            this.size = size;
-            this.boardElement = boardElement;
-            this.field = [];
+        private field: Array<Point> = [];
+
+        constructor(private size, private boardElement: Element) {
             for (var i = 0; i < this.size; i++) {
                 for (var j = 0; j < this.size; j++) {
-                    const div = document.createElement('div');
+                    const div = document.createElement('div') as HTMLDivElement;
                     div.className = 'grid-item';
                     const point = new Point(j, i, div);
                     this.field.push(point);
@@ -52,77 +59,99 @@
                 }
             }
         }
-        getPoint(x, y) {
+
+        public getPoint(x: number, y: number): Point | null {
             if (x > -1 && x < size && y > -1 && y < size) {
                 return this.field[y * size + x];
             }
+
             return null;
         }
-        spawnApple(takenPoint) {
+
+        public spawnApple(takenPoint: Array<Point>): void {
             const emptyFields = this.field.filter((element) => {
                 return !takenPoint.includes(element);
             });
+
             const appleIndex = Math.floor(Math.random() * emptyFields.length);
+
             emptyFields[appleIndex].setApple();
         }
     }
+
     class Snake {
-        constructor(startPoint, direction, field) {
-            this.startPoint = startPoint;
-            this.direction = direction;
-            this.field = field;
-            this.snake = [];
+        private snake: Array<Point> = [];
+
+        constructor(private startPoint: Point, public direction: Direction, private field: Field) {
             startPoint.setSnakeHead();
             this.snake.push(startPoint);
             this.field.spawnApple(this.snake);
         }
+
         move() {
             const currentHead = this.snake[this.snake.length - 1];
             const newHead = this.field.getPoint(currentHead.X + this.direction.xAxisOffset, currentHead.Y + this.direction.yAxisOffset);
+
             if (newHead === null || this.snake.indexOf(newHead) > -1) {
                 throw 'Game Over';
             }
+
             const grow = newHead.isApple;
+
             currentHead.setSnakePart();
             newHead.setSnakeHead();
             this.snake.push(newHead);
+
             if (grow === true) {
                 this.field.spawnApple(this.snake);
                 return;
             }
+
             const emptyPoint = this.snake.shift();
             emptyPoint.setEmpty();
         }
     }
+
     const size = 50;
+
     const elementSize = 100 / size;
     document.styleSheets[0].insertRule(`.grid-item { width: ${elementSize}%; }`);
+
     const gameElement = document.getElementsByClassName('game')[0];
+
     var game = new Field(size, gameElement);
+
     var snake = new Snake(game.getPoint(size / 2, size / 2), Direction.Left, game);
+
     var k = 1;
-    document.addEventListener('keypress', (e) => {
+
+
+    document.addEventListener('keypress', (e: KeyboardEvent) => {
         if (e.key === 'w' || e.key === 'W') {
             if (snake.direction != Direction.Bottom) {
                 snake.direction = Direction.Top;
             }
         }
+
         if (e.key === 'd' || e.key === 'D') {
             if (snake.direction != Direction.Left) {
                 snake.direction = Direction.Right;
             }
         }
+
         if (e.key === 's' || e.key === 'S') {
             if (snake.direction != Direction.Top) {
                 snake.direction = Direction.Bottom;
             }
         }
+
         if (e.key === 'a' || e.key === 'A') {
             if (snake.direction != Direction.Right) {
                 snake.direction = Direction.Left;
             }
         }
     });
+
     var interval = setInterval(() => {
         try {
             snake.move();
@@ -132,5 +161,11 @@
             throw e;
         }
     }, 100);
+
+
+
+
+
+
+
 })();
-//# sourceMappingURL=index.js.map

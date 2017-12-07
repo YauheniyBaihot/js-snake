@@ -1,3 +1,38 @@
-h1 {
-    color: green;
+
+
+.header {
+    background: saddlebrown;
+    margin: auto;
+}
+
+.game {
+    height: 500px;
+    width: 500px;
+    margin: 50px auto;
+    background: green;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.grid-item {
+    background: blue;
+}
+
+.snake-part {
+    background: red;
+}
+
+.snake-head {
+    background: rebeccapurple;
+}
+
+.apple {
+    background: yellow;
+}
+
+.game-over {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    text-align: center;
 }
