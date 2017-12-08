@@ -6,28 +6,29 @@
 }
 
 .game {
-    height: 500px;
-    width: 500px;
+    height: 80vh;;
+    width: 80vh;;
     margin: 50px auto;
-    background: green;
     display: flex;
+    background: #abe188;
     flex-wrap: wrap;
 }
 
 .grid-item {
-    background: blue;
+  
 }
 
 .snake-part {
-    background: red;
+    background: #f1bb87;
+    border-radius: 50%;
 }
 
 .snake-head {
-    background: rebeccapurple;
+    background: #f7ef99;
 }
 
 .apple {
-    background: yellow;
+    background: #f78e69;
 }
 
 .game-over {
@@ -35,4 +36,9 @@
     height: 100%;
     width: 100%;
     text-align: center;
+}
+
+body {
+    background: #5d675b;
+    font-family: 'Open Sans', sans-serif;
 }

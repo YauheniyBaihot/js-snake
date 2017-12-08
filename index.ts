@@ -112,7 +112,7 @@
         }
     }
 
-    const size = 50;
+    const size = 20;
 
     const elementSize = 100 / size;
     document.styleSheets[0].insertRule(`.grid-item { width: ${elementSize}%; }`);
@@ -127,25 +127,25 @@
 
 
     document.addEventListener('keypress', (e: KeyboardEvent) => {
-        if (e.key === 'w' || e.key === 'W') {
+        if (e.code === 'KeyW') {
             if (snake.direction != Direction.Bottom) {
                 snake.direction = Direction.Top;
             }
         }
 
-        if (e.key === 'd' || e.key === 'D') {
+        if (e.code === 'KeyD') {
             if (snake.direction != Direction.Left) {
                 snake.direction = Direction.Right;
             }
         }
 
-        if (e.key === 's' || e.key === 'S') {
+        if (e.code === 'KeyS') {
             if (snake.direction != Direction.Top) {
                 snake.direction = Direction.Bottom;
             }
         }
 
-        if (e.key === 'a' || e.key === 'A') {
+        if (e.code === 'KeyA') {
             if (snake.direction != Direction.Right) {
                 snake.direction = Direction.Left;
             }
