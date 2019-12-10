@@ -1,44 +1,4 @@
-
-
-.header {
-    background: saddlebrown;
-    margin: auto;
-}
-
-.game {
-    height: 80vh;;
-    width: 80vh;;
-    margin: 50px auto;
-    display: flex;
-    background: #abe188;
-    flex-wrap: wrap;
-}
-
-.grid-item {
-  
-}
-
-.snake-part {
-    background: #f1bb87;
-    border-radius: 50%;
-}
-
-.snake-head {
-    background: #f7ef99;
-}
-
-.apple {
-    background: #f78e69;
-}
-
-.game-over {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    text-align: center;
-}
-
-body {
-    background: #5d675b;
-    font-family: 'Open Sans', sans-serif;
+.board {
+    margin: 20px;
+    border: solid 1px black;
 }

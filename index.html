@@ -2,21 +2,32 @@
 <html>
 
 <head>
-    <title>Snake game</title>
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://necolas.github.io/normalize.css/7.0.0/normalize.css">
+    <title>Snake</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 
 <body>
+<div>
+    <button id="new-game">New Game</button>
+    <label>
+        <input id="speed-factor-input" type="range" min="1" max="10" value="1"/>
+        Speed factor
+    </label>
+    <label>
+        <input id="boundaries-input" type="checkbox" checked/>
+        Boundaries
+    </label>
+</div>
+<div>
+    High score:
+    <span  id="high-score">0</span>
 
-    <!--  <div class="game-over">Game Over</div> -->
-    <header class="header">Snake game, score</header>
-    <div class="game">
-    </div>
-    <footer>Description</footer>
+    Speed factor
+    <span  id="speed-factor">0</span>
+</div>
+<canvas id="field" width="500" height="500" class="board"></canvas>
 
-    <script type="text/javascript" src="index.js"></script>
+<script type="module" src="index.js"></script>
 </body>
 
 </html>

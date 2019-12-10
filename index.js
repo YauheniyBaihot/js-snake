@@ -1,136 +1,108 @@
-(function () {
-    class Direction {
-        constructor(xAxisOffset, yAxisOffset) {
-            this.xAxisOffset = xAxisOffset;
-            this.yAxisOffset = yAxisOffset;
-        }
+import {Game, LeftDirection, DownDirection, RightDirection, UpDirection} from "./game.js";
+
+let game;
+
+const canvas = document.getElementById('field');
+const context = canvas.getContext('2d');
+const highScoreDiv = document.getElementById('high-score');
+const speedFactorDiv = document.getElementById('speed-factor');
+const newGameButton = document.getElementById('new-game');
+const speedFactorInput = document.getElementById('speed-factor-input');
+const boundariesInput = document.getElementById('boundaries-input');
+let previousUpdate = null;
+
+let cancel;
+
+let speedUp = false;
+
+
+const movesStack = [];
+
+const frames = [200, 150, 130, 115, 100, 90, 80, 60, 45, 30];
+
+// toDO: run animation every frame
+function processFrame(timestamp) {
+    cancel = window.requestAnimationFrame(processFrame);
+    const frame = timestamp - previousUpdate;
+
+    if (frame < frames[game.speedFactor - 1] && previousUpdate != null) {
+        return;
     }
-    Direction.Top = new Direction(0, -1);
-    Direction.Bottom = new Direction(0, 1);
-    Direction.Left = new Direction(-1, 0);
-    Direction.Right = new Direction(1, 0);
-    class Point {
-        constructor(x, y, element) {
-            this.x = x;
-            this.y = y;
-            this.element = element;
-        }
-        get X() {
-            return this.x;
-        }
-        get Y() {
-            return this.y;
-        }
-        setEmpty() {
-            this.element.className = "grid-item";
-        }
-        setSnakePart() {
-            this.element.className = "grid-item snake-part";
-        }
-        setSnakeHead() {
-            this.element.className = "grid-item snake-head";
-        }
-        setApple() {
-            this.element.className = "grid-item apple";
-        }
-        get isApple() {
-            return this.element.className.includes('apple');
-        }
+    previousUpdate = timestamp;
+
+    if (!game.move(movesStack.shift())) {
+        alert('GameOver');
+        window.cancelAnimationFrame(cancel);
     }
-    class Field {
-        constructor(size, boardElement) {
-            this.size = size;
-            this.boardElement = boardElement;
-            this.field = [];
-            for (var i = 0; i < this.size; i++) {
-                for (var j = 0; j < this.size; j++) {
-                    const div = document.createElement('div');
-                    div.className = 'grid-item';
-                    const point = new Point(j, i, div);
-                    this.field.push(point);
-                    boardElement.appendChild(div);
-                }
-            }
+
+
+    draw();
+}
+
+function draw() {
+    context.save();
+    context.scale(canvas.width / game.width, canvas.height / game.height);
+
+    context.clearRect(0, 0, game.width, game.height);
+
+    context.lineWidth = 1 / 20;
+
+    for (let i = 0; i < game.snake.length; i++) {
+
+        if (game.snake[i] === game.head) {
+            context.strokeStyle = 'red';
+            context.fillStyle = 'red';
         }
-        getPoint(x, y) {
-            if (x > -1 && x < size && y > -1 && y < size) {
-                return this.field[y * size + x];
-            }
-            return null;
-        }
-        spawnApple(takenPoint) {
-            const emptyFields = this.field.filter((element) => {
-                return !takenPoint.includes(element);
-            });
-            const appleIndex = Math.floor(Math.random() * emptyFields.length);
-            emptyFields[appleIndex].setApple();
-        }
+
+        context.strokeRect(game.snake[i].x + 1 / 20, game.snake[i].y + 1 / 20, 18 / 20, 18 / 20);
+        context.fillRect(game.snake[i].x + 3 / 20, game.snake[i].y + 3 / 20, 14 / 20, 14 / 20)
     }
-    class Snake {
-        constructor(startPoint, direction, field) {
-            this.startPoint = startPoint;
-            this.direction = direction;
-            this.field = field;
-            this.snake = [];
-            startPoint.setSnakeHead();
-            this.snake.push(startPoint);
-            this.field.spawnApple(this.snake);
-        }
-        move() {
-            const currentHead = this.snake[this.snake.length - 1];
-            const newHead = this.field.getPoint(currentHead.X + this.direction.xAxisOffset, currentHead.Y + this.direction.yAxisOffset);
-            if (newHead === null || this.snake.indexOf(newHead) > -1) {
-                throw 'Game Over';
-            }
-            const grow = newHead.isApple;
-            currentHead.setSnakePart();
-            newHead.setSnakeHead();
-            this.snake.push(newHead);
-            if (grow === true) {
-                this.field.spawnApple(this.snake);
-                return;
-            }
-            const emptyPoint = this.snake.shift();
-            emptyPoint.setEmpty();
-        }
+
+    context.strokeStyle = 'green';
+    context.fillStyle = 'green';
+
+    context.strokeRect(game.food.x + 1 / 20, game.food.y + 1 / 20, 18 / 20, 18 / 20);
+    context.fillRect(game.food.x + 3 / 20, game.food.y + 3 / 20, 14 / 20, 14 / 20);
+
+    context.restore();
+
+    highScoreDiv.innerText = game.score;
+    speedFactorDiv.innerText = game.speedFactor;
+}
+
+document.addEventListener('keydown', (event) => {
+    // up
+    switch (event.code) {
+        case 'Space':
+            speedUp = true;
+            break;
+        case 'KeyS':
+        case 'ArrowDown':
+            movesStack.push(DownDirection);
+            break;
+        case 'KeyW':
+        case 'ArrowUp':
+            movesStack.push(UpDirection);
+            break;
+        case 'KeyA':
+        case 'ArrowLeft':
+            movesStack.push(LeftDirection);
+            break;
+        case 'KeyD':
+        case 'ArrowRight':
+            movesStack.push(RightDirection);
+            break;
     }
-    const size = 20;
-    const elementSize = 100 / size;
-    document.styleSheets[0].insertRule(`.grid-item { width: ${elementSize}%; }`);
-    const gameElement = document.getElementsByClassName('game')[0];
-    var game = new Field(size, gameElement);
-    var snake = new Snake(game.getPoint(size / 2, size / 2), Direction.Left, game);
-    var k = 1;
-    document.addEventListener('keypress', (e) => {
-        if (e.code === 'KeyW') {
-            if (snake.direction != Direction.Bottom) {
-                snake.direction = Direction.Top;
-            }
-        }
-        if (e.code === 'KeyD') {
-            if (snake.direction != Direction.Left) {
-                snake.direction = Direction.Right;
-            }
-        }
-        if (e.code === 'KeyS') {
-            if (snake.direction != Direction.Top) {
-                snake.direction = Direction.Bottom;
-            }
-        }
-        if (e.code === 'KeyA') {
-            if (snake.direction != Direction.Right) {
-                snake.direction = Direction.Left;
-            }
-        }
-    });
-    var interval = setInterval(() => {
-        try {
-            snake.move();
-        }
-        catch (e) {
-            clearInterval(interval);
-            throw e;
-        }
-    }, 100);
-})();
-//# sourceMappingURL=index.js.map
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.code === 'Space') {
+        speedUp = false;
+    }
+});
+
+newGameButton.addEventListener('click', (event) => {
+
+    game = new Game(speedFactorInput.value, boundariesInput.checked);
+    cancel = requestAnimationFrame(processFrame);
+});
