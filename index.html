@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <title>Snake</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-</head>
+  </head>
 
-<body>
-<div>
-    <button id="new-game">New Game</button>
-    <label>
-        <input id="speed-factor-input" type="range" min="1" max="10" value="1"/>
-        Speed factor
-    </label>
-    <label>
-        <input id="boundaries-input" type="checkbox" checked/>
+  <body>
+    <button id="new-game">Play</button>
+    <div>
+      <label>
+        <input id="boundaries-input" type="checkbox" checked />
         Boundaries
-    </label>
-</div>
-<div>
-    High score:
-    <span  id="high-score">0</span>
+      </label>
+    </div>
+    <div>
+      High score:
+      <span id="high-score">0</span>
+    </div>
+    <div>
+      Speed:
+      <span id="speed-factor">0</span>
+    </div>
+    <canvas
+      id="field"
+      width="500"
+      height="500"
+      style="border: solid 1px black"
+      class="board"
+    ></canvas>
 
-    Speed factor
-    <span  id="speed-factor">0</span>
-</div>
-<canvas id="field" width="500" height="500" class="board"></canvas>
-
-<script type="module" src="index.js"></script>
-</body>
-
+    <script type="module" src="index.js"></script>
+  </body>
 </html>
